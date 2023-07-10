@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NeptuneServer.Communication.Incoming
+namespace NeptuneConnector.Communication.Incoming
 {
     public class ClientPacket
     {

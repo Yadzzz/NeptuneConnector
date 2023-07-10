@@ -1,12 +1,12 @@
 ﻿using NeptuneConnector;
-using NeptuneServer.Communication.Incoming;
+using NeptuneConnector.Communication.Incoming;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NeptuneServer.Communication
+namespace NeptuneConnector.Communication
 {
     public interface IPacket
     {

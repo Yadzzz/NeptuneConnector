@@ -1,17 +1,18 @@
-﻿using NeptuneServer.Communication.Outgoing;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NeptuneConnector.Communication.Outgoing.Packets.Application
+namespace NeptuneConnector.Communication.Outgoing.Packets
 {
     public class ApplicationLogComposer : ServerPacket
     {
-        public ApplicationLogComposer(string errorText) : base(OutgoingPacketHeaders.ApplicationLogComposer)
+        public ApplicationLogComposer(string logType, string logText, string logDate) : base(OutgoingPacketHeaders.ApplicationLogEvent)
         {
-            base.WriteString(errorText);
+            base.WriteString(logType);
+            base.WriteString(logText);
+            base.WriteString(logDate);
         }
     }
 }

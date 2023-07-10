@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NeptuneServer.Communication.Outgoing;
-using NeptuneServer.Communication.Incoming;
-using NeptuneServer.Communication.Incoming.Packets;
+using NeptuneConnector.Communication.Outgoing;
+using NeptuneConnector.Communication.Incoming;
+using NeptuneConnector.Communication.Incoming.Packets;
 
-namespace NeptuneServer.Communication
+namespace NeptuneConnector.Communication
 {
     public class CommunicationManager
     {

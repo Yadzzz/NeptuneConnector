@@ -1,5 +1,5 @@
-﻿using NeptuneServer.Communication;
-using NeptuneServer.Communication.Incoming;
+﻿using NeptuneConnector.Communication;
+using NeptuneConnector.Communication.Incoming;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,6 @@ using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NeptuneConnector
 {
@@ -22,14 +21,23 @@ namespace NeptuneConnector
         public ClientSocket(string ip, int port)
         {
             this._communicationManager = new CommunicationManager();
+            this._data = new byte[1024];
             this.Connect(ip, port);
             this.Recieve();
         }
 
         private void Connect(string ip, int port)
         {
-            this._socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            this._socket.Connect(ip, port);
+            try
+            {
+                this._socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                this._socket.Connect(ip, port);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                throw;
+            }
         }
 
         private void Recieve()
@@ -38,9 +46,10 @@ namespace NeptuneConnector
             {
                 this._socket.BeginReceive(this._data, 0, this._data.Length, SocketFlags.None, this.Recieved, this._socket);
             }
-            catch
+            catch(Exception e)
             {
                 this.Disconnect();
+                throw;
             }
         }
 
@@ -59,7 +68,7 @@ namespace NeptuneConnector
 
                     Console.WriteLine("Packet ID [" + header + "] Recieved!");
 
-                    if (!this.Authenticated && header != IncomingPacketHeaders.AuthenticationComplete || header != IncomingPacketHeaders.AuthenticationDenied)
+                    if (!this.Authenticated && header != IncomingPacketHeaders.AuthenticationComplete && header != IncomingPacketHeaders.AuthenticationDenied)
                     {
                         throw (new AuthenticationException("Authenticaion Required"));
                     }
@@ -81,8 +90,8 @@ namespace NeptuneConnector
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
                 this.Disconnect();
+                throw;
             }
         }
 
@@ -92,9 +101,10 @@ namespace NeptuneConnector
             {
                 this._socket.Send(data, 0, data.Length, SocketFlags.None);
             }
-            catch
+            catch(Exception e)
             {
                 this.Disconnect();
+                throw;
             }
         }
 
