@@ -13,16 +13,20 @@ namespace NeptuneConnector
         private int _port;
         private string _accountSid;
         private string _authToken;
+        private string _organizationSid;
+        private string _organizationAuthToken;
         private int _applicationId;
 
         private ClientSocket _clientSocket { get; set; }
 
-        public Connector(string ip, int port, string accountSid, string authToken, int applicationId)
+        public Connector(string ip, int port, string accountSid, string authToken, string organizationSid, string organizationAuthToken, int applicationId)
         {
             this._ip = ip;
             this._port = port;
             this._accountSid = accountSid;
             this._authToken = authToken;
+            this._organizationSid = organizationSid;
+            this._organizationAuthToken = organizationAuthToken;
             this._applicationId = applicationId;
         }
 
@@ -35,7 +39,7 @@ namespace NeptuneConnector
 
             this._clientSocket = new ClientSocket(this._ip, this._port);
 
-            AuthenticationRequestComposer authRequest = new AuthenticationRequestComposer(this._accountSid, this._authToken, this._applicationId);
+            AuthenticationRequestComposer authRequest = new AuthenticationRequestComposer(this._accountSid, this._authToken, this._organizationSid, this._organizationAuthToken, this._applicationId);
             this._clientSocket.Send(authRequest.Finalize());
         }
 
