@@ -19,6 +19,16 @@ namespace NeptuneConnector
 
         private ClientSocket _clientSocket { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ip">Server IP Adress</param>
+        /// <param name="port">Server Port</param>
+        /// <param name="accountSid">Account SID</param>
+        /// <param name="authToken">Account Auth Token</param>
+        /// <param name="organizationSid">Organization SID</param>
+        /// <param name="organizationAuthToken">Organization Auth Token</param>
+        /// <param name="applicationId">Application Id</param>
         public Connector(string ip, int port, string accountSid, string authToken, string organizationSid, string organizationAuthToken, int applicationId)
         {
             this._ip = ip;
@@ -30,6 +40,9 @@ namespace NeptuneConnector
             this._applicationId = applicationId;
         }
 
+        /// <summary>
+        /// Connects to the server by given authentications
+        /// </summary>
         public void Connect()
         {
             if(this._clientSocket != null)
@@ -43,7 +56,12 @@ namespace NeptuneConnector
             this._clientSocket.Send(authRequest.Finalize());
         }
 
-        public void LogApplication(string logType, string logText, string logDate)
+        /// <summary>
+        /// Logs Data
+        /// </summary>
+        /// <param name="logType">Log Type</param>
+        /// <param name="logText">Log Text</param>
+        public void LogApplication(LogType logType, string logText)
         {
             if (this._clientSocket == null)
             {
@@ -51,7 +69,7 @@ namespace NeptuneConnector
                 return;
             }
 
-            ApplicationLogComposer applicationLogComposer = new ApplicationLogComposer(logType, logText, logDate);
+            ApplicationLogComposer applicationLogComposer = new ApplicationLogComposer(logType.ToString(), logText, DateTime.Now.ToString());
             this._clientSocket.Send(applicationLogComposer.Finalize());
         }
     }

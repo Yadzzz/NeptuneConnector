@@ -14,7 +14,7 @@ namespace NeptuneConnectorTest
             while(true)
             {
                 Console.ReadKey();
-                connector.LogApplication("Warning", "LogText Test", DateTime.Now.ToString());
+                connector.LogApplication(LogType.Log, "LogText Test");
             }
         }
     }
