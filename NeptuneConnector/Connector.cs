@@ -7,15 +7,17 @@ using System.Threading.Tasks;
 
 namespace NeptuneConnector
 {
-    public class Connector
+    public class Connector : IDisposable
     {
         private string _ip;
         private int _port;
+        private bool _autoConnect;
+        private bool _keepConnectionAlive;
         private string _accountSid;
         private string _authToken;
         private string _organizationSid;
         private string _organizationAuthToken;
-        private int _applicationId;
+        private string _applicationIdentifier;
 
         private ClientSocket _clientSocket { get; set; }
 
@@ -24,20 +26,38 @@ namespace NeptuneConnector
         /// </summary>
         /// <param name="ip">Server IP Adress</param>
         /// <param name="port">Server Port</param>
+        /// <param name="autoConnect">Auto Connect to Server</param>
+        /// <param name="keepConnectionAlive">Keeps Server Connection Alive</param>
         /// <param name="accountSid">Account SID</param>
         /// <param name="authToken">Account Auth Token</param>
         /// <param name="organizationSid">Organization SID</param>
         /// <param name="organizationAuthToken">Organization Auth Token</param>
-        /// <param name="applicationId">Application Id</param>
-        public Connector(string ip, int port, string accountSid, string authToken, string organizationSid, string organizationAuthToken, int applicationId)
+        /// <param name="applicationIdentifier">Application Id</param>
+        public Connector(
+            string ip,
+            int port,
+            bool autoConnect,
+            bool keepConnectionAlive,
+            string accountSid,
+            string authToken,
+            string organizationSid,
+            string organizationAuthToken,
+            string applicationIdentifier)
         {
             this._ip = ip;
             this._port = port;
+            this._autoConnect = autoConnect;
+            this._keepConnectionAlive = keepConnectionAlive;
             this._accountSid = accountSid;
             this._authToken = authToken;
             this._organizationSid = organizationSid;
             this._organizationAuthToken = organizationAuthToken;
-            this._applicationId = applicationId;
+            this._applicationIdentifier = applicationIdentifier;
+
+            if (autoConnect)
+            {
+                this.Connect();
+            }
         }
 
         /// <summary>
@@ -45,14 +65,14 @@ namespace NeptuneConnector
         /// </summary>
         public void Connect()
         {
-            if(this._clientSocket != null)
+            if (this._clientSocket != null)
             {
                 this._clientSocket.Disconnect();
             }
 
             this._clientSocket = new ClientSocket(this._ip, this._port);
 
-            AuthenticationRequestComposer authRequest = new AuthenticationRequestComposer(this._accountSid, this._authToken, this._organizationSid, this._organizationAuthToken, this._applicationId);
+            AuthenticationRequestComposer authRequest = new AuthenticationRequestComposer(this._accountSid, this._authToken, this._organizationSid, this._organizationAuthToken, this._applicationIdentifier);
             this._clientSocket.Send(authRequest.Finalize());
         }
 
@@ -65,12 +85,35 @@ namespace NeptuneConnector
         {
             if (this._clientSocket == null)
             {
-                Console.WriteLine("ClientSocket NULL");
+                this.Connect();
+            }
+
+            if (_clientSocket == null)
+            {
+                Console.WriteLine("Client Socket NULL");
                 return;
             }
 
             ApplicationLogComposer applicationLogComposer = new ApplicationLogComposer(logType.ToString(), logText, DateTime.Now.ToString());
             this._clientSocket.Send(applicationLogComposer.Finalize());
+
+            if(!this._keepConnectionAlive)
+            {
+                _clientSocket.Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Disconnects the Client Socket
+        /// </summary>
+        public void Disconnect()
+        {
+            _clientSocket.Disconnect();
+        }
+
+        public void Dispose()
+        {
+            _clientSocket.Disconnect();
         }
     }
 }
