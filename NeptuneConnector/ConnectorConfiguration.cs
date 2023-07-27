@@ -8,5 +8,9 @@ namespace NeptuneConnector
 {
     public class ConnectorConfiguration
     {
+        public string Ip;
+        public int Port;
+        public bool AutoConnect;
+        public bool KeepConnectionAlive;
     }
 }

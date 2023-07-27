@@ -33,7 +33,7 @@ namespace NeptuneConnector
                 this._socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 this._socket.Connect(ip, port);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 throw;
@@ -46,7 +46,7 @@ namespace NeptuneConnector
             {
                 this._socket.BeginReceive(this._data, 0, this._data.Length, SocketFlags.None, this.Recieved, this._socket);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.Disconnect();
                 throw;
@@ -101,25 +101,33 @@ namespace NeptuneConnector
             {
                 this._socket.Send(data, 0, data.Length, SocketFlags.None);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.Disconnect();
                 throw;
             }
         }
 
-        public void Disconnect()
+        public bool IsSocketConnected
         {
-            try
+            get
             {
-                this._socket.Shutdown(SocketShutdown.Both);
-                this._socket.Disconnect(false);
-                this._socket.Dispose();
-            }
-            catch
-            {
-
+                return this._socket != null && this._socket.Connected;
             }
         }
+
+    public void Disconnect()
+    {
+        try
+        {
+            this._socket.Shutdown(SocketShutdown.Both);
+            this._socket.Disconnect(false);
+            this._socket.Dispose();
+        }
+        catch
+        {
+
+        }
     }
+}
 }

@@ -34,27 +34,24 @@ namespace NeptuneConnector
         /// <param name="organizationAuthToken">Organization Auth Token</param>
         /// <param name="applicationIdentifier">Application Id</param>
         public Connector(
-            string ip,
-            int port,
-            bool autoConnect,
-            bool keepConnectionAlive,
+            ConnectorConfiguration configuration,
             string accountSid,
             string authToken,
             string organizationSid,
             string organizationAuthToken,
             string applicationIdentifier)
         {
-            this._ip = ip;
-            this._port = port;
-            this._autoConnect = autoConnect;
-            this._keepConnectionAlive = keepConnectionAlive;
+            this._ip = configuration.Ip;
+            this._port = configuration.Port;
+            this._autoConnect = configuration.AutoConnect;
+            this._keepConnectionAlive = configuration.KeepConnectionAlive;
             this._accountSid = accountSid;
             this._authToken = authToken;
             this._organizationSid = organizationSid;
             this._organizationAuthToken = organizationAuthToken;
             this._applicationIdentifier = applicationIdentifier;
 
-            if (autoConnect)
+            if (configuration.AutoConnect)
             {
                 this.Connect();
             }
@@ -83,7 +80,7 @@ namespace NeptuneConnector
         /// <param name="logText">Log Text</param>
         public void LogApplication(LogType logType, string logText)
         {
-            if (this._clientSocket == null)
+            if (this._clientSocket == null || !this._clientSocket.IsSocketConnected)
             {
                 this.Connect();
             }
